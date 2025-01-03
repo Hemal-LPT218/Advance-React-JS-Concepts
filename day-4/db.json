@@ -1,0 +1,28 @@
+{
+  "todos": [
+    {
+      "id": "c268588a-9ed7-4782-b8a4-ee307141194d",
+      "text": "zxcvsefd",
+      "completed": true
+    },
+    {
+      "id": "b6498ae1-1740-4341-93a6-6af8f5c9d9fa",
+      "text": "ewsfxc",
+      "completed": false
+    }
+  ],
+  "users": [
+    {
+      "id": "4271fc52-b2c2-4a77-9b4d-1799ec8080dd",
+      "firstName": "Hemal",
+      "lastName": "Parmar",
+      "email": "hemal.parmar@tatvasoft.com"
+    },
+    {
+      "id": "3f2aaf1d-c625-4d69-aa34-788b8e7e0a41",
+      "firstName": "Hemal",
+      "lastName": "Parmar",
+      "email": "hemal@mailinator.com"
+    }
+  ]
+}
