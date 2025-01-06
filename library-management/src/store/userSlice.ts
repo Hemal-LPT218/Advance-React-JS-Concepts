@@ -1,7 +1,8 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { User, UserState } from "../types";
+import { IUser, IUserState } from "../types";
 
-const initialState: UserState = {
+const initialState: IUserState = {
+  users: [],
   user: null,
 };
 
@@ -9,7 +10,14 @@ const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
-    login: (state, action: PayloadAction<User>) => {
+    register: (state, action: PayloadAction<IUser>) => {
+      if (state.users === undefined) {
+        state.users = [action.payload];
+      } else {
+        state.users.push(action.payload);
+      }
+    },
+    login: (state, action: PayloadAction<IUser>) => {
       state.user = action.payload;
     },
     logout: (state) => {
@@ -18,5 +26,5 @@ const userSlice = createSlice({
   },
 });
 
-export const { login, logout } = userSlice.actions;
+export const { login, logout, register } = userSlice.actions;
 export default userSlice.reducer;

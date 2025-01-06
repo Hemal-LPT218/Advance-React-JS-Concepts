@@ -1,0 +1,23 @@
+{
+  "register": "Register",
+  "fullName": "Full Name",
+  "email": "Email",
+  "password": "Password",
+  "confirmPassword": "Confirm Password",
+  "dateOfBirth": "Date of Birth",
+  "role": "Role",
+  "fullNameRequired": "Full Name is required.",
+  "emailInvalid": "Invalid email format.",
+  "emailRequired": "Email is required.",
+  "emailExists": "Email already exists.",
+  "passwordMustLong": "Password must be at least 6 characters long.",
+  "passwordRequired": "Password is required.",
+  "passwordMustMatch": "Passwords must match.",
+  "confirmPasswordRequired": "Confirm password is required.",
+  "dateOfBirthRequired": "Date of birth is required.",
+  "roleRequired": "Role is required.",
+
+  "login": "Login",
+  "emailNotExists": "Email does not exist.",
+  "passwordInvalid": "Password is invalid."
+}
