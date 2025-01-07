@@ -1,4 +1,10 @@
-import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
+import {
+  FormControl,
+  FormHelperText,
+  InputLabel,
+  MenuItem,
+  Select,
+} from "@mui/material";
 import { SelectInputProps } from "@mui/material/Select/SelectInput";
 import React, { memo } from "react";
 
@@ -18,6 +24,9 @@ interface IInputFieldProps {
     | React.FocusEventHandler<HTMLInputElement | HTMLTextAreaElement>
     | undefined;
   menuList?: ISelectOption[];
+  error?: boolean | undefined;
+  helperText?: React.ReactNode;
+  className?: string | undefined;
 }
 
 const SelectInput: React.FC<IInputFieldProps> = ({
@@ -28,11 +37,16 @@ const SelectInput: React.FC<IInputFieldProps> = ({
   onChange,
   onBlur,
   menuList,
+  error,
+  helperText,
+  className,
 }) => {
   return (
-    <div>
+    <div className={className}>
       <FormControl fullWidth>
-        <InputLabel id={id}>{label}</InputLabel>
+        <InputLabel id={id} error={error}>
+          {label}
+        </InputLabel>
         <Select
           labelId={id}
           id={id}
@@ -42,6 +56,7 @@ const SelectInput: React.FC<IInputFieldProps> = ({
           onChange={onChange}
           onBlur={onBlur}
           className="text-left"
+          error={error}
         >
           {menuList?.map((menu) => (
             <MenuItem key={menu.value} value={menu.value}>
@@ -49,6 +64,7 @@ const SelectInput: React.FC<IInputFieldProps> = ({
             </MenuItem>
           ))}
         </Select>
+        <FormHelperText error={error}>{helperText}</FormHelperText>
       </FormControl>
     </div>
   );

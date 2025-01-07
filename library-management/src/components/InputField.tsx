@@ -16,6 +16,8 @@ interface IInputFieldProps {
   error?: boolean | undefined;
   helperText?: React.ReactNode;
   InputLabelProps?: Partial<InputLabelProps> | undefined;
+  className?: string | undefined;
+  disabled?: boolean | undefined;
 }
 
 const InputField: React.FC<IInputFieldProps> = ({
@@ -29,9 +31,11 @@ const InputField: React.FC<IInputFieldProps> = ({
   error,
   helperText,
   InputLabelProps,
+  className,
+  disabled,
 }) => {
   return (
-    <div>
+    <div className={className}>
       <TextField
         id={id}
         label={label}
@@ -45,6 +49,7 @@ const InputField: React.FC<IInputFieldProps> = ({
         helperText={helperText}
         InputLabelProps={InputLabelProps}
         fullWidth
+        disabled={disabled}
       />
     </div>
   );

@@ -13,3 +13,28 @@ export interface IUserState {
   user: IUser | null;
   users: IUser[];
 }
+
+export interface IBook {
+  id: string;
+  title: string;
+  description: string;
+  quantity: number;
+  author: string;
+}
+
+export interface IBookState {
+  books: IBook[];
+}
+
+export interface IAssignedBook {
+  id: string;
+  studentId: string;
+  bookId: string;
+  issueDate: string;
+  returnDate: string;
+  isAssigned: boolean;
+}
+
+export interface IAssignedBookState {
+  assignedBooks: IAssignedBook[];
+}

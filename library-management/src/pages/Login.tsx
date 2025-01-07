@@ -10,6 +10,8 @@ import ButtonComponent from "../components/ButtonComponent";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../store/store";
 import { login } from "../store/userSlice";
+import PasswordField from "../components/PasswordField";
+import { toast } from "react-toastify";
 
 interface IFormValue {
   email: string;
@@ -46,6 +48,8 @@ const Login = () => {
 
       dispatch(login(existingUser));
 
+      toast.success(enJson.accountLoggedIn);
+
       navigate(
         existingUser.role === ACCOUNT_TYPE.ADMIN
           ? ROUTES_URL.ADMIN_HOME
@@ -63,7 +67,7 @@ const Login = () => {
     });
 
   return (
-    <>
+    <div className="flex flex-col gap-10 mx-auto my-10 p-10 max-w-2xl w-full text-center border rounded-2xl shadow-2xl">
       <HeadingText>{enJson.login}</HeadingText>
       <form onSubmit={handleSubmit} className="flex flex-col gap-8">
         <InputField
@@ -78,10 +82,9 @@ const Login = () => {
           helperText={touched.email && errors.email}
         />
 
-        <InputField
+        <PasswordField
           id="password"
           label={enJson.password}
-          type="password"
           name="password"
           value={values.password}
           onChange={handleChange}
@@ -92,7 +95,7 @@ const Login = () => {
 
         <ButtonComponent type="submit">{enJson.login}</ButtonComponent>
       </form>
-    </>
+    </div>
   );
 };
 

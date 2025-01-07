@@ -11,11 +11,7 @@ const userSlice = createSlice({
   initialState,
   reducers: {
     register: (state, action: PayloadAction<IUser>) => {
-      if (state.users === undefined) {
-        state.users = [action.payload];
-      } else {
-        state.users.push(action.payload);
-      }
+      state.users.push(action.payload);
     },
     login: (state, action: PayloadAction<IUser>) => {
       state.user = action.payload;

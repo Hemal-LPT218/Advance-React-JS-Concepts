@@ -7,13 +7,15 @@ import { ACCOUNT_TYPE, ROUTES_URL } from "../constants";
 import { IUser } from "../types";
 import HeadingText from "../components/HeadingText";
 import InputField from "../components/InputField";
-import SelectInput from "../components/SelectField";
+import SelectField from "../components/SelectField";
 import ButtonComponent from "../components/ButtonComponent";
 import { useDispatch, useSelector } from "react-redux";
 import { register } from "../store/userSlice";
-import { v4 as uuid } from "uuid";
+import { v4 as uuidv4 } from "uuid";
 import _ from "lodash";
 import { RootState } from "../store/store";
+import PasswordField from "../components/PasswordField";
+import { toast } from "react-toastify";
 
 interface IFormValue extends IUser {
   confirmPassword: string;
@@ -60,7 +62,9 @@ const Register = () => {
 
       const valuesWithoutConfirmPassword = _.omit(values, ["confirmPassword"]);
 
-      dispatch(register({ ...valuesWithoutConfirmPassword, id: uuid() }));
+      dispatch(register({ ...valuesWithoutConfirmPassword, id: uuidv4() }));
+
+      toast.success(enJson.accountRegistered);
 
       navigate(ROUTES_URL.LOGIN);
     },
@@ -75,7 +79,7 @@ const Register = () => {
     });
 
   return (
-    <>
+    <div className="flex flex-col gap-10 mx-auto my-10 p-10 max-w-2xl w-full text-center border rounded-2xl shadow-2xl">
       <HeadingText>{enJson.register}</HeadingText>
       <form onSubmit={handleSubmit} className="flex flex-col gap-8">
         <InputField
@@ -102,10 +106,9 @@ const Register = () => {
           helperText={touched.email && errors.email}
         />
 
-        <InputField
+        <PasswordField
           id="password"
           label={enJson.password}
-          type="password"
           name="password"
           value={values.password}
           onChange={handleChange}
@@ -114,10 +117,9 @@ const Register = () => {
           helperText={touched.password && errors.password}
         />
 
-        <InputField
+        <PasswordField
           id="confirmPassword"
           label={enJson.confirmPassword}
-          type="password"
           name="confirmPassword"
           value={values.confirmPassword}
           onChange={handleChange}
@@ -141,7 +143,7 @@ const Register = () => {
           }}
         />
 
-        <SelectInput
+        <SelectField
           id="role"
           name="role"
           label={enJson.role}
@@ -156,7 +158,7 @@ const Register = () => {
 
         <ButtonComponent type="submit">{enJson.register}</ButtonComponent>
       </form>
-    </>
+    </div>
   );
 };
 

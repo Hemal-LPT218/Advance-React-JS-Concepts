@@ -3,6 +3,8 @@ import { persistStore, persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 import { combineReducers } from "redux";
 import userReducer from "./userSlice";
+import bookReducer from "./bookSlice";
+import assignedBookReducer from "./assignedBookSlice";
 
 const persistConfig = {
   key: "root",
@@ -11,6 +13,8 @@ const persistConfig = {
 
 const rootReducer = combineReducers({
   user: userReducer,
+  book: bookReducer,
+  assignedBook: assignedBookReducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
