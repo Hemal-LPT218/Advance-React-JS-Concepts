@@ -5,23 +5,23 @@ import {
   Route,
   Navigate,
 } from "react-router-dom";
+import { ROUTES_URL } from "../constants";
+import Home from "../pages/Home";
 import Login from "../pages/Login";
 import Register from "../pages/Register";
-import { ROUTES_URL } from "../constants";
-import RestrictedRoute from "./RestrictedRoute";
+import BookList from "../pages/BookList";
 import AdminHome from "../pages/AdminHome";
 import StudentHome from "../pages/StudentHome";
-import AdminProtectedRoute from "./AdminProtectedRoute";
-import StudentProtectedRoute from "./StudentProtectedRoute";
-import BookList from "../pages/BookList";
-import Home from "../pages/Home";
 import AssignedBookList from "../pages/AssignedBookList";
+import StudentProtectedRoute from "./StudentProtectedRoute";
+import AdminProtectedRoute from "./AdminProtectedRoute";
+import RestrictedRoute from "./RestrictedRoute";
 
 const AppRoutes: React.FC = () => {
   return (
     <Router>
       <Routes>
-        {/* Public Routes */}
+        {/* Restricted Routes */}
         <Route
           path={ROUTES_URL.HOME}
           element={
@@ -46,6 +46,8 @@ const AppRoutes: React.FC = () => {
             </RestrictedRoute>
           }
         />
+
+        {/* Admin Protected Routes */}
         <Route
           path={ROUTES_URL.ADMIN_HOME}
           element={
@@ -70,6 +72,8 @@ const AppRoutes: React.FC = () => {
             </AdminProtectedRoute>
           }
         />
+
+        {/* Student Protected Routes */}
         <Route
           path={ROUTES_URL.STUDENT_HOME}
           element={

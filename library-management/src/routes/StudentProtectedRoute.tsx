@@ -3,8 +3,8 @@ import { Navigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { RootState } from "../store/store";
 import { ACCOUNT_TYPE, ROUTES_URL } from "../constants";
-import ProtectedRoute from "./ProtectedRoute";
 import StudentDashboardLayout from "../layouts/StudentDashboardLayout";
+import ProtectedRoute from "./ProtectedRoute";
 
 const StudentProtectedRoute: React.FC<{ children: JSX.Element }> = ({
   children,

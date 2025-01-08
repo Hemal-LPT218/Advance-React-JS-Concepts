@@ -1,10 +1,10 @@
+import React, { memo } from "react";
+import { OverridableStringUnion } from "@mui/types";
 import {
   Button,
   ButtonPropsColorOverrides,
   ButtonPropsVariantOverrides,
 } from "@mui/material";
-import React, { memo } from "react";
-import { OverridableStringUnion } from "@mui/types";
 
 interface IButtonComponentProps {
   children: React.ReactNode;

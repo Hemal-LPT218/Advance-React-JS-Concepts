@@ -5,7 +5,11 @@ interface IHeadingTextProps {
 }
 
 const HeadingText: React.FC<IHeadingTextProps> = ({ children }) => {
-  return <h1 className="text-4xl font-extrabold">{children}</h1>;
+  return (
+    <h1 className="text-4xl font-extrabold text-center text-secondary">
+      {children}
+    </h1>
+  );
 };
 
 export default memo(HeadingText);

@@ -1,14 +1,15 @@
+import { useCallback, useMemo, useState } from "react";
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
+import TableRow from "@mui/material/TableRow";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
+import TableContainer from "@mui/material/TableContainer";
 import TablePagination from "@mui/material/TablePagination";
-import TableRow from "@mui/material/TableRow";
-import enJson from "../locales/en.json";
+import ConfirmationDialog from "./ConfirmationDialog";
 import ButtonComponent from "./ButtonComponent";
-import { useCallback, useMemo, useState } from "react";
+import enJson from "../locales/en.json";
 
 export interface Column<T> {
   id: keyof T;
@@ -26,6 +27,8 @@ interface ITableComponentProps<T> {
   onDelete?: (row: T) => void;
   tableMaxHeight?: number;
   noTableData?: string;
+  hideEdit?: boolean;
+  deleteDescription?: string;
 }
 
 const TableComponent = <T,>({
@@ -36,8 +39,11 @@ const TableComponent = <T,>({
   onDelete,
   tableMaxHeight = 370,
   noTableData,
+  hideEdit,
+  deleteDescription,
 }: ITableComponentProps<T>) => {
   const [page, setPage] = useState(0);
+
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
   const handleChangePage = useCallback((_: unknown, newPage: number) => {
@@ -47,6 +53,7 @@ const TableComponent = <T,>({
   const handleChangeRowsPerPage = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
       setRowsPerPage(+event.target.value);
+
       setPage(0);
     },
     []
@@ -85,21 +92,23 @@ const TableComponent = <T,>({
                   );
                 })}
                 {showAction && (
-                  <TableCell align="center">
-                    <ButtonComponent
-                      variant="contained"
-                      onClick={() => onEdit?.(row)}
-                      className="!mr-2"
-                    >
-                      {enJson.edit}
-                    </ButtonComponent>
-                    <ButtonComponent
-                      variant="contained"
-                      onClick={() => onDelete?.(row)}
-                      color="warning"
+                  <TableCell align="center" className="min-w-52">
+                    {!hideEdit && (
+                      <ButtonComponent
+                        variant="contained"
+                        onClick={() => onEdit?.(row)}
+                        className="!mr-2"
+                      >
+                        {enJson.edit}
+                      </ButtonComponent>
+                    )}
+                    <ConfirmationDialog
+                      title={enJson.deleteConfirmation}
+                      description={deleteDescription}
+                      onSuccess={() => onDelete?.(row)}
                     >
                       {enJson.delete}
-                    </ButtonComponent>
+                    </ConfirmationDialog>
                   </TableCell>
                 )}
               </TableRow>
@@ -117,6 +126,8 @@ const TableComponent = <T,>({
       ),
     [
       columns,
+      deleteDescription,
+      hideEdit,
       noTableData,
       onDelete,
       onEdit,
@@ -144,6 +155,7 @@ const TableComponent = <T,>({
           <TableBody>{tableRow}</TableBody>
         </Table>
       </TableContainer>
+
       {!!rows.length && (
         <TablePagination
           rowsPerPageOptions={[10, 25, 100]}

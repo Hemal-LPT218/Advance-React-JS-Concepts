@@ -13,14 +13,20 @@ const userSlice = createSlice({
     register: (state, action: PayloadAction<IUser>) => {
       state.users.push(action.payload);
     },
+
     login: (state, action: PayloadAction<IUser>) => {
       state.user = action.payload;
     },
+
     logout: (state) => {
       state.user = null;
+    },
+
+    deleteAccount: (state, action: PayloadAction<string>) => {
+      state.users = state.users.filter((user) => user.id !== action.payload);
     },
   },
 });
 
-export const { login, logout, register } = userSlice.actions;
+export const { login, logout, register, deleteAccount } = userSlice.actions;
 export default userSlice.reducer;

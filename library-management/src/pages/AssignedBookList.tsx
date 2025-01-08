@@ -1,23 +1,23 @@
 import React, { memo, useCallback, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from "../store/store";
 import { FormikHelpers, useFormik } from "formik";
+import { Switch, Typography } from "@mui/material";
+import { toast } from "react-toastify";
+import { v4 as uuidv4 } from "uuid";
 import * as Yup from "yup";
 import { IAssignedBook } from "../types";
-import enJson from "../locales/en.json";
-import HeadingText from "../components/HeadingText";
+import { ACCOUNT_TYPE } from "../constants";
 import InputField from "../components/InputField";
+import HeadingText from "../components/HeadingText";
+import SelectField from "../components/SelectField";
 import ButtonComponent from "../components/ButtonComponent";
 import TableComponent, { Column } from "../components/TableComponent";
-import SelectField from "../components/SelectField";
-import { ACCOUNT_TYPE } from "../constants";
-import { Switch } from "@mui/material";
-import { v4 as uuidv4 } from "uuid";
+import { AppDispatch, RootState } from "../store/store";
 import {
   addAssignedBookWithBookUpdate,
   updateAssignedBookWithBookUpdate,
 } from "../store/thunkForAssignedBooks";
-import { toast } from "react-toastify";
+import enJson from "../locales/en.json";
 
 const initialValues: IAssignedBook = {
   id: "",
@@ -36,8 +36,10 @@ const validationSchema = Yup.object({
     .required(enJson.returnDateRequired)
     .test("is-after-today", enJson.returnDateGreater, (value) => {
       const returnDate = new Date(value);
+
       const today = new Date();
       today.setHours(0, 0, 0, 0);
+
       return returnDate > today;
     }),
 });
@@ -89,6 +91,7 @@ const AssignedBoolList: React.FC = () => {
 
       if (alreadyAssigned) {
         setFieldError("bookId", enJson.bookAlreadyAssigned);
+
         return;
       }
 
@@ -108,11 +111,17 @@ const AssignedBoolList: React.FC = () => {
 
   const handleSwitchChange = useCallback(
     (checked: boolean, id?: string, bookId?: string) => {
+      if (!books.find((book) => book.id === bookId)?.quantity && checked) {
+        toast.error(enJson.quantityNotAvailable);
+
+        return;
+      }
+
       dispatch(updateAssignedBookWithBookUpdate({ id, checked, bookId }));
 
       toast.success(enJson.bookAssignedUpdated);
     },
-    [dispatch]
+    [books, dispatch]
   );
 
   const columns: Column<IAssignedBook>[] = useMemo(
@@ -130,7 +139,7 @@ const AssignedBoolList: React.FC = () => {
         label: enJson.book,
         minWidth: 170,
         format: (value) => (
-          <>{booksList.find((book) => book.value === value)?.title}</>
+          <>{books.find((book) => book.id === value)?.title}</>
         ),
       },
       {
@@ -142,6 +151,18 @@ const AssignedBoolList: React.FC = () => {
         id: "returnDate",
         label: enJson.returnDate,
         minWidth: 170,
+        format: (value, row) => (
+          <Typography
+            color={
+              new Date(value as string) < new Date() && row?.isAssigned
+                ? "warning"
+                : ""
+            }
+            className="!text-sm"
+          >
+            {value}
+          </Typography>
+        ),
       },
       {
         id: "isAssigned",
@@ -150,6 +171,11 @@ const AssignedBoolList: React.FC = () => {
         format: (value, row) => (
           <Switch
             checked={value as boolean}
+            color={
+              value && new Date(row?.returnDate as string) < new Date()
+                ? "warning"
+                : "primary"
+            }
             onChange={(
               _: React.ChangeEvent<HTMLInputElement>,
               checked: boolean
@@ -158,7 +184,7 @@ const AssignedBoolList: React.FC = () => {
         ),
       },
     ],
-    [booksList, handleSwitchChange, studentUser]
+    [books, handleSwitchChange, studentUser]
   );
 
   const {
@@ -180,7 +206,10 @@ const AssignedBoolList: React.FC = () => {
       <HeadingText>{enJson.assignedBookManagement}</HeadingText>
 
       {/* Form */}
-      <form onSubmit={handleSubmit} className="flex gap-3 items-start">
+      <form
+        onSubmit={handleSubmit}
+        className="grid xl:grid-cols-5 md:grid-cols-4 grid-cols-2 gap-3 items-start"
+      >
         <SelectField
           id="studentId"
           name="studentId"
@@ -191,7 +220,6 @@ const AssignedBoolList: React.FC = () => {
           menuList={studentUser}
           error={touched.studentId && !!errors.studentId}
           helperText={touched.studentId && errors.studentId}
-          className="w-full"
         />
 
         <SelectField
@@ -204,7 +232,6 @@ const AssignedBoolList: React.FC = () => {
           menuList={booksList}
           error={touched.bookId && !!errors.bookId}
           helperText={touched.bookId && errors.bookId}
-          className="w-full"
         />
 
         <InputField
@@ -220,7 +247,6 @@ const AssignedBoolList: React.FC = () => {
           InputLabelProps={{
             shrink: true,
           }}
-          className="w-full"
           disabled
         />
 
@@ -237,20 +263,22 @@ const AssignedBoolList: React.FC = () => {
           InputLabelProps={{
             shrink: true,
           }}
-          className="w-full"
         />
 
-        <ButtonComponent type="submit" className="!w-1/3">
-          {enJson.submit}
-        </ButtonComponent>
-        <ButtonComponent
-          type="button"
-          onClick={() => resetForm()}
-          variant="outlined"
-          className="!w-1/3"
-        >
-          {enJson.reset}
-        </ButtonComponent>
+        <div className="w-full flex gap-3 justify-end xl:col-start-5 md:col-start-3 col-start-1 xl:col-span-1 col-span-2">
+          <ButtonComponent type="submit" className="h-14 min-w-24">
+            {enJson.submit}
+          </ButtonComponent>
+
+          <ButtonComponent
+            type="button"
+            onClick={() => resetForm()}
+            variant="outlined"
+            className="h-14 min-w-24"
+          >
+            {enJson.reset}
+          </ButtonComponent>
+        </div>
       </form>
 
       {/* Book List */}

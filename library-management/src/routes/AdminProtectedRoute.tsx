@@ -1,10 +1,10 @@
 import React, { memo } from "react";
 import { Navigate } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { RootState } from "../store/store";
 import { ACCOUNT_TYPE, ROUTES_URL } from "../constants";
-import ProtectedRoute from "./ProtectedRoute";
+import { RootState } from "../store/store";
 import AdminDashboardLayout from "../layouts/AdminDashboardLayout";
+import ProtectedRoute from "./ProtectedRoute";
 
 const AdminProtectedRoute: React.FC<{ children: JSX.Element }> = ({
   children,

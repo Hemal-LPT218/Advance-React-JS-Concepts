@@ -1,18 +1,19 @@
 import React, { memo, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from "../store/store";
-import { addBook, editBook } from "../store/bookSlice";
-import { v4 as uuidv4 } from "uuid";
 import { FormikErrors, FormikHelpers, useFormik } from "formik";
+import { Typography } from "@mui/material";
+import { toast } from "react-toastify";
+import { v4 as uuidv4 } from "uuid";
 import * as Yup from "yup";
 import { IBook } from "../types";
-import enJson from "../locales/en.json";
+import TableComponent, { Column } from "../components/TableComponent";
+import ButtonComponent from "../components/ButtonComponent";
 import HeadingText from "../components/HeadingText";
 import InputField from "../components/InputField";
-import ButtonComponent from "../components/ButtonComponent";
-import TableComponent, { Column } from "../components/TableComponent";
-import { toast } from "react-toastify";
+import { addBook, editBook } from "../store/bookSlice";
+import { AppDispatch, RootState } from "../store/store";
 import { deleteBookWithAssignedBookUpdate } from "../store/thunkForBooks";
+import enJson from "../locales/en.json";
 
 const initialValues: IBook = {
   id: "",
@@ -38,6 +39,11 @@ const columns: Column<IBook>[] = [
     id: "quantity",
     label: enJson.quantity,
     minWidth: 100,
+    format: (value) => (
+      <Typography color={!value ? "warning" : ""} className="!text-sm">
+        {value}
+      </Typography>
+    ),
   },
   {
     id: "author",
@@ -84,22 +90,24 @@ const BookList: React.FC = () => {
     []
   );
 
-  const handleDelete = (id: string) => {
-    if (window.confirm(enJson.areYouWantToDeleteBook)) {
+  const handleDelete = useCallback(
+    (id: string) => {
       const assignedBookExist = assignedBooks.find(
         (assignedBook) => assignedBook.bookId === id && assignedBook.isAssigned
       );
 
       if (assignedBookExist) {
         toast.error(enJson.bookAssignedSomeone);
+
         return;
       }
 
       dispatch(deleteBookWithAssignedBookUpdate({ bookId: id }));
 
       toast.success(enJson.bookDeleted);
-    }
-  };
+    },
+    [assignedBooks, dispatch]
+  );
 
   const {
     handleSubmit,
@@ -121,7 +129,10 @@ const BookList: React.FC = () => {
       <HeadingText>{enJson.bookManagement}</HeadingText>
 
       {/* Form */}
-      <form onSubmit={handleSubmit} className="flex gap-3 items-start">
+      <form
+        onSubmit={handleSubmit}
+        className="grid xl:grid-cols-5 md:grid-cols-4 grid-cols-2 gap-3 items-start"
+      >
         <InputField
           id="title"
           label={enJson.title}
@@ -170,14 +181,20 @@ const BookList: React.FC = () => {
           helperText={touched.author && errors.author}
         />
 
-        <ButtonComponent type="submit">{enJson.submit}</ButtonComponent>
-        <ButtonComponent
-          type="button"
-          onClick={() => resetForm()}
-          variant="outlined"
-        >
-          {enJson.reset}
-        </ButtonComponent>
+        <div className="w-full flex gap-3 justify-end xl:col-start-5 md:col-start-3 col-start-1 xl:col-span-1 col-span-2">
+          <ButtonComponent type="submit" className="h-14 min-w-24">
+            {values.id ? enJson.update : enJson.submit}
+          </ButtonComponent>
+
+          <ButtonComponent
+            type="button"
+            onClick={() => resetForm()}
+            variant="outlined"
+            className="h-14 min-w-24"
+          >
+            {enJson.reset}
+          </ButtonComponent>
+        </div>
       </form>
 
       {/* Book List */}
@@ -188,6 +205,7 @@ const BookList: React.FC = () => {
         onEdit={(row) => handleEdit(row, setValues)}
         onDelete={(row) => handleDelete(row.id)}
         noTableData={enJson.noBooksAvailable}
+        deleteDescription={enJson.areYouWantToDeleteBook}
       />
     </div>
   );

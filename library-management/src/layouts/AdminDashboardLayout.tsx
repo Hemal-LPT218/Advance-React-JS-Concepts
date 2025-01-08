@@ -1,23 +1,23 @@
-import { createTheme } from "@mui/material/styles";
+import { memo, useCallback, useEffect, useMemo } from "react";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 import DashboardIcon from "@mui/icons-material/Dashboard";
-import LibraryBooksIcon from "@mui/icons-material/LibraryBooks";
 import LibraryAddIcon from "@mui/icons-material/LibraryAdd";
 import LibraryAddCheckIcon from "@mui/icons-material/LibraryAddCheck";
+import { createTheme } from "@mui/material/styles";
+import { Typography } from "@mui/material";
 import { AppProvider, Navigation } from "@toolpad/core/AppProvider";
+import { useDemoRouter } from "@toolpad/core/internal";
 import {
   DashboardLayout,
   SidebarFooterProps,
 } from "@toolpad/core/DashboardLayout";
-import { useDemoRouter } from "@toolpad/core/internal";
 import { PAGE_ROUTES_NAME, ROUTES_URL } from "../constants";
-import { memo, useEffect, useMemo } from "react";
-import enJson from "../locales/en.json";
-import { useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+import HeaderTitle from "../components/HeaderTitle";
 import { logout } from "../store/userSlice";
 import { RootState } from "../store/store";
-import { Typography } from "@mui/material";
-import { toast } from "react-toastify";
+import enJson from "../locales/en.json";
 
 const theme = createTheme({
   cssVariables: {
@@ -78,6 +78,7 @@ const AdminDashboardLayout: React.FC<{ children: JSX.Element }> = ({
 
   useEffect(() => {
     router.navigate(router.pathname);
+
     navigate(router.pathname);
   }, [navigate, router, router.pathname]);
 
@@ -86,10 +87,23 @@ const AdminDashboardLayout: React.FC<{ children: JSX.Element }> = ({
       signIn: () => {},
       signOut: () => {
         toast.success(enJson.accountLoggedOut);
+
         dispatch(logout());
       },
     };
   }, [dispatch]);
+
+  const AppTitle = useCallback(() => {
+    return (
+      <HeaderTitle
+        onClick={() => {
+          router.navigate(ROUTES_URL.ADMIN_HOME);
+
+          navigate(ROUTES_URL.ADMIN_HOME);
+        }}
+      />
+    );
+  }, [navigate, router]);
 
   return (
     <AppProvider
@@ -98,25 +112,17 @@ const AdminDashboardLayout: React.FC<{ children: JSX.Element }> = ({
           id: user?.id,
           name: user?.fullName,
           email: user?.email,
+          image: "../../public/profileIcon.png",
         },
       }}
       navigation={NAVIGATION}
       router={router}
       theme={theme}
       authentication={authentication}
-      branding={{
-        logo: (
-          <LibraryBooksIcon
-            color="primary"
-            fontSize="large"
-            className="!h-full"
-          />
-        ),
-        title: enJson.libraryManagementSystem,
-        homeUrl: ROUTES_URL.ADMIN_HOME,
-      }}
     >
-      <DashboardLayout slots={{ sidebarFooter: SidebarFooter }}>
+      <DashboardLayout
+        slots={{ sidebarFooter: SidebarFooter, appTitle: AppTitle }}
+      >
         <div className="p-10">{children}</div>
       </DashboardLayout>
     </AppProvider>

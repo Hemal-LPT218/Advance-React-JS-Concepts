@@ -1,10 +1,10 @@
+import { memo, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 import { createTheme } from "@mui/material/styles";
-import LibraryBooksIcon from "@mui/icons-material/LibraryBooks";
 import { AppProvider } from "@toolpad/core/AppProvider";
 import { DashboardLayout } from "@toolpad/core/DashboardLayout";
 import { ROUTES_URL } from "../constants";
-import { memo } from "react";
-import enJson from "../locales/en.json";
+import HeaderTitle from "../components/HeaderTitle";
 import Footer from "../components/Footer";
 
 const theme = createTheme({
@@ -24,23 +24,17 @@ const theme = createTheme({
 });
 
 const UnAuthLayout: React.FC<{ children: JSX.Element }> = ({ children }) => {
+  const navigate = useNavigate();
+
+  const AppTitle = useCallback(() => {
+    return <HeaderTitle onClick={() => navigate(ROUTES_URL.HOME)} />;
+  }, [navigate]);
+
   return (
-    <AppProvider
-      theme={theme}
-      branding={{
-        logo: (
-          <LibraryBooksIcon
-            color="primary"
-            fontSize="large"
-            className="!h-full"
-          />
-        ),
-        title: enJson.libraryManagementSystem,
-        homeUrl: ROUTES_URL.HOME,
-      }}
-    >
-      <DashboardLayout hideNavigation>
+    <AppProvider theme={theme}>
+      <DashboardLayout hideNavigation slots={{ appTitle: AppTitle }}>
         <div className="h-full overflow-auto">{children}</div>
+
         <Footer />
       </DashboardLayout>
     </AppProvider>

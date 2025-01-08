@@ -1,3 +1,4 @@
+import React, { memo } from "react";
 import {
   FormControl,
   FormHelperText,
@@ -6,7 +7,6 @@ import {
   Select,
 } from "@mui/material";
 import { SelectInputProps } from "@mui/material/Select/SelectInput";
-import React, { memo } from "react";
 
 export interface ISelectOption {
   value: string;
@@ -29,7 +29,7 @@ interface IInputFieldProps {
   className?: string | undefined;
 }
 
-const SelectInput: React.FC<IInputFieldProps> = ({
+const SelectField: React.FC<IInputFieldProps> = ({
   id,
   label,
   name,
@@ -42,32 +42,32 @@ const SelectInput: React.FC<IInputFieldProps> = ({
   className,
 }) => {
   return (
-    <div className={className}>
-      <FormControl fullWidth>
-        <InputLabel id={id} error={error}>
-          {label}
-        </InputLabel>
-        <Select
-          labelId={id}
-          id={id}
-          name={name}
-          label={label}
-          value={value}
-          onChange={onChange}
-          onBlur={onBlur}
-          className="text-left"
-          error={error}
-        >
-          {menuList?.map((menu) => (
-            <MenuItem key={menu.value} value={menu.value}>
-              {menu.title}
-            </MenuItem>
-          ))}
-        </Select>
-        <FormHelperText error={error}>{helperText}</FormHelperText>
-      </FormControl>
-    </div>
+    <FormControl fullWidth className={className}>
+      <InputLabel id={id} error={error}>
+        {label}
+      </InputLabel>
+
+      <Select
+        labelId={id}
+        id={id}
+        name={name}
+        label={label}
+        value={value}
+        onChange={onChange}
+        onBlur={onBlur}
+        className="text-left"
+        error={error}
+      >
+        {menuList?.map((menu) => (
+          <MenuItem key={menu.value} value={menu.value}>
+            {menu.title}
+          </MenuItem>
+        ))}
+      </Select>
+
+      <FormHelperText error={error}>{helperText}</FormHelperText>
+    </FormControl>
   );
 };
 
-export default memo(SelectInput);
+export default memo(SelectField);

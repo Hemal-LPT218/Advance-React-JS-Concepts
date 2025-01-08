@@ -1,21 +1,22 @@
 import { memo, useCallback } from "react";
-import { FormikHelpers, useFormik } from "formik";
-import * as Yup from "yup";
-import { useNavigate } from "react-router-dom";
-import enJson from "../locales/en.json";
-import { ACCOUNT_TYPE, ROUTES_URL } from "../constants";
-import { IUser } from "../types";
-import HeadingText from "../components/HeadingText";
-import InputField from "../components/InputField";
-import SelectField from "../components/SelectField";
-import ButtonComponent from "../components/ButtonComponent";
+import { useNavigate, Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { register } from "../store/userSlice";
-import { v4 as uuidv4 } from "uuid";
-import _ from "lodash";
-import { RootState } from "../store/store";
-import PasswordField from "../components/PasswordField";
+import { FormikHelpers, useFormik } from "formik";
+import { Typography } from "@mui/material";
 import { toast } from "react-toastify";
+import { v4 as uuidv4 } from "uuid";
+import * as Yup from "yup";
+import _ from "lodash";
+import { IUser } from "../types";
+import { ACCOUNT_TYPE, ROUTES_URL } from "../constants";
+import ButtonComponent from "../components/ButtonComponent";
+import PasswordField from "../components/PasswordField";
+import HeadingText from "../components/HeadingText";
+import SelectField from "../components/SelectField";
+import InputField from "../components/InputField";
+import { register } from "../store/userSlice";
+import { RootState } from "../store/store";
+import enJson from "../locales/en.json";
 
 interface IFormValue extends IUser {
   confirmPassword: string;
@@ -79,8 +80,9 @@ const Register = () => {
     });
 
   return (
-    <div className="flex flex-col gap-10 mx-auto my-10 p-10 max-w-2xl w-full text-center border rounded-2xl shadow-2xl">
+    <div className="flex flex-col gap-10 sm:mx-auto mx-10 my-10 sm:p-10 p-5 max-w-2xl sm:w-full text-center border rounded-2xl shadow-2xl">
       <HeadingText>{enJson.register}</HeadingText>
+
       <form onSubmit={handleSubmit} className="flex flex-col gap-8">
         <InputField
           id="fullName"
@@ -157,6 +159,13 @@ const Register = () => {
         />
 
         <ButtonComponent type="submit">{enJson.register}</ButtonComponent>
+
+        <Typography>
+          {enJson.alreadyAccount}{" "}
+          <Link to={ROUTES_URL.LOGIN} className="text-primary underline">
+            {enJson.login}
+          </Link>
+        </Typography>
       </form>
     </div>
   );

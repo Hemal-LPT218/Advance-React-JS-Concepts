@@ -12,6 +12,7 @@ const assignedBookSlice = createSlice({
     addAssignBook: (state, action: PayloadAction<IAssignedBook>) => {
       state.assignedBooks.push(action.payload);
     },
+
     updateAssignBook: (
       state,
       action: PayloadAction<{ id?: string; checked: boolean }>
@@ -19,8 +20,10 @@ const assignedBookSlice = createSlice({
       const newAssignedBooks = state.assignedBooks.findIndex(
         (assignedBook) => assignedBook.id === action.payload.id
       );
+
       state.assignedBooks[newAssignedBooks].isAssigned = action.payload.checked;
     },
+
     deleteAssignBookInBulk: (
       state,
       action: PayloadAction<{ ids: string[] }>
@@ -28,6 +31,7 @@ const assignedBookSlice = createSlice({
       const newAssignedBooks = state.assignedBooks.filter(
         (assignedBook) => !action.payload.ids.includes(assignedBook.id)
       );
+
       state.assignedBooks = newAssignedBooks;
     },
   },

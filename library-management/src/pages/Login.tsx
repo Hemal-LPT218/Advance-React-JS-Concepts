@@ -1,17 +1,18 @@
 import { memo, useCallback } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 import { FormikHelpers, useFormik } from "formik";
+import { Typography } from "@mui/material";
+import { toast } from "react-toastify";
 import * as Yup from "yup";
-import { useNavigate } from "react-router-dom";
-import enJson from "../locales/en.json";
 import { ACCOUNT_TYPE, ROUTES_URL } from "../constants";
+import ButtonComponent from "../components/ButtonComponent";
+import PasswordField from "../components/PasswordField";
 import HeadingText from "../components/HeadingText";
 import InputField from "../components/InputField";
-import ButtonComponent from "../components/ButtonComponent";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../store/store";
 import { login } from "../store/userSlice";
-import PasswordField from "../components/PasswordField";
-import { toast } from "react-toastify";
+import { RootState } from "../store/store";
+import enJson from "../locales/en.json";
 
 interface IFormValue {
   email: string;
@@ -38,11 +39,14 @@ const Login = () => {
   const onSubmit = useCallback(
     (values: IFormValue, { setFieldError }: FormikHelpers<IFormValue>) => {
       const existingUser = users.find((user) => user.email === values.email);
+
       if (!existingUser) {
         setFieldError("email", enJson.emailNotExists);
+
         return;
       } else if (existingUser && existingUser.password !== values.password) {
         setFieldError("password", enJson.passwordInvalid);
+
         return;
       }
 
@@ -67,8 +71,9 @@ const Login = () => {
     });
 
   return (
-    <div className="flex flex-col gap-10 mx-auto my-10 p-10 max-w-2xl w-full text-center border rounded-2xl shadow-2xl">
+    <div className="flex flex-col gap-10 sm:mx-auto mx-10 my-10 sm:p-10 p-5 max-w-2xl sm:w-full text-center border rounded-2xl shadow-2xl">
       <HeadingText>{enJson.login}</HeadingText>
+
       <form onSubmit={handleSubmit} className="flex flex-col gap-8">
         <InputField
           id="email"
@@ -94,6 +99,13 @@ const Login = () => {
         />
 
         <ButtonComponent type="submit">{enJson.login}</ButtonComponent>
+
+        <Typography>
+          {enJson.doNotAccount}{" "}
+          <Link to={ROUTES_URL.REGISTER} className="text-primary underline">
+            {enJson.register}
+          </Link>
+        </Typography>
       </form>
     </div>
   );

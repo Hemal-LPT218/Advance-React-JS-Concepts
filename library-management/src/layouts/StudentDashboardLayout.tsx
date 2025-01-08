@@ -1,15 +1,14 @@
-import { createTheme } from "@mui/material/styles";
-import LibraryBooksIcon from "@mui/icons-material/LibraryBooks";
-import { AppProvider } from "@toolpad/core/AppProvider";
-import { DashboardLayout } from "@toolpad/core/DashboardLayout";
-import { ROUTES_URL } from "../constants";
-import { memo, useMemo } from "react";
-import enJson from "../locales/en.json";
+import { memo, useCallback, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { DashboardLayout } from "@toolpad/core/DashboardLayout";
+import { AppProvider } from "@toolpad/core/AppProvider";
+import { createTheme } from "@mui/material/styles";
+import { toast } from "react-toastify";
+import HeaderTitle from "../components/HeaderTitle";
+import Footer from "../components/Footer";
 import { logout } from "../store/userSlice";
 import { RootState } from "../store/store";
-import Footer from "../components/Footer";
-import { toast } from "react-toastify";
+import enJson from "../locales/en.json";
 
 const theme = createTheme({
   cssVariables: {
@@ -39,10 +38,15 @@ const StudentDashboardLayout: React.FC<{ children: JSX.Element }> = ({
       signIn: () => {},
       signOut: () => {
         toast.success(enJson.accountLoggedOut);
+
         dispatch(logout());
       },
     };
   }, [dispatch]);
+
+  const AppTitle = useCallback(() => {
+    return <HeaderTitle />;
+  }, []);
 
   return (
     <AppProvider
@@ -51,24 +55,15 @@ const StudentDashboardLayout: React.FC<{ children: JSX.Element }> = ({
           id: user?.id,
           name: user?.fullName,
           email: user?.email,
+          image: "../../public/profileIcon.png",
         },
       }}
       theme={theme}
       authentication={authentication}
-      branding={{
-        logo: (
-          <LibraryBooksIcon
-            color="primary"
-            fontSize="large"
-            className="!h-full"
-          />
-        ),
-        title: enJson.libraryManagementSystem,
-        homeUrl: ROUTES_URL.STUDENT_HOME,
-      }}
     >
-      <DashboardLayout hideNavigation>
-        <div className="h-full">{children}</div>
+      <DashboardLayout hideNavigation slots={{ appTitle: AppTitle }}>
+        <div className="h-full overflow-auto">{children}</div>
+
         <Footer />
       </DashboardLayout>
     </AppProvider>

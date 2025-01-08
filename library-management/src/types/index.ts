@@ -38,3 +38,12 @@ export interface IAssignedBook {
 export interface IAssignedBookState {
   assignedBooks: IAssignedBook[];
 }
+
+export interface IAdminDashboard {
+  id: string;
+  student: string;
+  lastIssuedBook: string;
+  totalIssuedBook: number;
+  pendingBook: number;
+  returnDatePassed: number;
+}

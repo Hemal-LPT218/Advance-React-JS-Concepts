@@ -1,0 +1,11 @@
+.img {
+  fill: var(--mui-palette-primary-main);
+}
+
+.text-primary {
+  color: var(--mui-palette-primary-main);
+}
+
+.text-secondary {
+  color: var(--mui-palette-secondary-main);
+}

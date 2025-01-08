@@ -1,3 +1,4 @@
+import React, { memo, useCallback, useState } from "react";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import {
   FormControl,
@@ -7,7 +8,6 @@ import {
   InputLabel,
   OutlinedInput,
 } from "@mui/material";
-import React, { memo, useCallback, useState } from "react";
 
 interface IPasswordFieldProps {
   id?: string | undefined;
@@ -61,6 +61,7 @@ const PasswordField: React.FC<IPasswordFieldProps> = ({
         <InputLabel htmlFor={id} error={error}>
           {label}
         </InputLabel>
+
         <OutlinedInput
           id={id}
           name={name}
@@ -86,6 +87,7 @@ const PasswordField: React.FC<IPasswordFieldProps> = ({
           error={error}
           label={label}
         />
+
         <FormHelperText error={error}>{helperText}</FormHelperText>
       </FormControl>
     </div>
