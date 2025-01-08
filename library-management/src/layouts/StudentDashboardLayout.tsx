@@ -55,7 +55,7 @@ const StudentDashboardLayout: React.FC<{ children: JSX.Element }> = ({
           id: user?.id,
           name: user?.fullName,
           email: user?.email,
-          image: "../../public/profileIcon.png",
+          image: "/profileIcon.png",
         },
       }}
       theme={theme}
