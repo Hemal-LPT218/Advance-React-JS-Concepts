@@ -98,7 +98,9 @@ const Login = () => {
           helperText={touched.password && errors.password}
         />
 
-        <ButtonComponent type="submit">{enJson.login}</ButtonComponent>
+        <ButtonComponent tooltipTitle={enJson.login} type="submit">
+          {enJson.login}
+        </ButtonComponent>
 
         <Typography>
           {enJson.doNotAccount}{" "}

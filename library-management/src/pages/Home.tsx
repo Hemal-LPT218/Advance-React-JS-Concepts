@@ -22,11 +22,15 @@ const Home = () => {
       <p className="text-center">{enJson.getStartedExperience}</p>
 
       <div className="flex space-x-4">
-        <ButtonComponent onClick={() => handleNavigation(ROUTES_URL.LOGIN)}>
+        <ButtonComponent
+          tooltipTitle={enJson.login}
+          onClick={() => handleNavigation(ROUTES_URL.LOGIN)}
+        >
           {enJson.login}
         </ButtonComponent>
 
         <ButtonComponent
+          tooltipTitle={enJson.register}
           onClick={() => handleNavigation(ROUTES_URL.REGISTER)}
           variant="outlined"
         >

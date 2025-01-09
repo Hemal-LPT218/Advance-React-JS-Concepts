@@ -1,10 +1,14 @@
 import React, { memo, useCallback, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { FormikHelpers, useFormik } from "formik";
-import { Switch, Typography } from "@mui/material";
+import ReadMoreIcon from "@mui/icons-material/ReadMore";
+import PlaylistAddIcon from "@mui/icons-material/PlaylistAdd";
+import CancelPresentationIcon from "@mui/icons-material/CancelPresentation";
+import { Typography } from "@mui/material";
 import { toast } from "react-toastify";
 import { v4 as uuidv4 } from "uuid";
 import * as Yup from "yup";
+import _ from "lodash";
 import { IAssignedBook } from "../types";
 import { ACCOUNT_TYPE } from "../constants";
 import InputField from "../components/InputField";
@@ -18,6 +22,7 @@ import {
   updateAssignedBookWithBookUpdate,
 } from "../store/thunkForAssignedBooks";
 import enJson from "../locales/en.json";
+import ConfirmationDialog from "../components/ConfirmationDialog";
 
 const initialValues: IAssignedBook = {
   id: "",
@@ -109,19 +114,13 @@ const AssignedBoolList: React.FC = () => {
     [assignedBooks, dispatch]
   );
 
-  const handleSwitchChange = useCallback(
-    (checked: boolean, id?: string, bookId?: string) => {
-      if (!books.find((book) => book.id === bookId)?.quantity && checked) {
-        toast.error(enJson.quantityNotAvailable);
-
-        return;
-      }
-
-      dispatch(updateAssignedBookWithBookUpdate({ id, checked, bookId }));
+  const handleBookReturn = useCallback(
+    (id?: string, bookId?: string) => {
+      dispatch(updateAssignedBookWithBookUpdate({ id, bookId }));
 
       toast.success(enJson.bookAssignedUpdated);
     },
-    [books, dispatch]
+    [dispatch]
   );
 
   const columns: Column<IAssignedBook>[] = useMemo(
@@ -168,23 +167,28 @@ const AssignedBoolList: React.FC = () => {
         id: "isAssigned",
         label: enJson.bookAssigned,
         minWidth: 170,
-        format: (value, row) => (
-          <Switch
-            checked={value as boolean}
-            color={
-              value && new Date(row?.returnDate as string) < new Date()
-                ? "warning"
-                : "primary"
-            }
-            onChange={(
-              _: React.ChangeEvent<HTMLInputElement>,
-              checked: boolean
-            ) => handleSwitchChange(checked, row?.id, row?.bookId)}
-          />
-        ),
+        format: (value, row) =>
+          value ? (
+            <ConfirmationDialog
+              title={enJson.bookReturnConfirmation}
+              description={enJson.areYouWantToReturnBook}
+              onSuccess={() => handleBookReturn(row?.id, row?.bookId)}
+              isDelete={false}
+              tooltipTitle={enJson.bookReturned}
+              buttonColor={
+                value && new Date(row?.returnDate as string) < new Date()
+                  ? "warning"
+                  : "primary"
+              }
+            >
+              <ReadMoreIcon />
+            </ConfirmationDialog>
+          ) : (
+            <></>
+          ),
       },
     ],
-    [books, handleSwitchChange, studentUser]
+    [books, handleBookReturn, studentUser]
   );
 
   const {
@@ -266,17 +270,22 @@ const AssignedBoolList: React.FC = () => {
         />
 
         <div className="w-full flex gap-3 justify-end xl:col-start-5 md:col-start-3 col-start-1 xl:col-span-1 col-span-2">
-          <ButtonComponent type="submit" className="h-14 min-w-24">
-            {enJson.submit}
+          <ButtonComponent
+            tooltipTitle={enJson.submit}
+            type="submit"
+            className="h-14 min-w-24"
+          >
+            <PlaylistAddIcon />
           </ButtonComponent>
 
           <ButtonComponent
+            tooltipTitle={enJson.reset}
             type="button"
             onClick={() => resetForm()}
             variant="outlined"
             className="h-14 min-w-24"
           >
-            {enJson.reset}
+            <CancelPresentationIcon />
           </ButtonComponent>
         </div>
       </form>
@@ -284,7 +293,10 @@ const AssignedBoolList: React.FC = () => {
       {/* Book List */}
       <TableComponent
         columns={columns}
-        rows={assignedBooks}
+        rows={_.orderBy(
+          assignedBooks.filter((assignedBook) => assignedBook.isAssigned),
+          ["returnDate"]
+        )}
         noTableData={enJson.noAssignedBooksAvailable}
       />
     </div>

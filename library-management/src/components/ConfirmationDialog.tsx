@@ -1,8 +1,12 @@
 import React, { memo, useCallback, useState } from "react";
+import ThumbUpAltIcon from "@mui/icons-material/ThumbUpAlt";
+import ThumbDownAltIcon from "@mui/icons-material/ThumbDownAlt";
 import DialogContentText from "@mui/material/DialogContentText";
+import { ButtonPropsColorOverrides } from "@mui/material";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
+import { OverridableStringUnion } from "@mui/types";
 import Dialog from "@mui/material/Dialog";
 import enJson from "../locales/en.json";
 import ButtonComponent from "./ButtonComponent";
@@ -12,6 +16,20 @@ interface IConfirmationDialogProps {
   title: string;
   description?: string;
   onSuccess: () => void;
+  isDelete?: boolean;
+  tooltipTitle?: string;
+  buttonColor?:
+    | OverridableStringUnion<
+        | "warning"
+        | "inherit"
+        | "primary"
+        | "secondary"
+        | "success"
+        | "error"
+        | "info",
+        ButtonPropsColorOverrides
+      >
+    | undefined;
 }
 
 const ConfirmationDialog: React.FC<IConfirmationDialogProps> = ({
@@ -19,6 +37,9 @@ const ConfirmationDialog: React.FC<IConfirmationDialogProps> = ({
   title,
   description,
   onSuccess,
+  isDelete = true,
+  tooltipTitle = enJson.delete,
+  buttonColor = "warning",
 }) => {
   const [open, setOpen] = useState(false);
 
@@ -38,7 +59,12 @@ const ConfirmationDialog: React.FC<IConfirmationDialogProps> = ({
 
   return (
     <React.Fragment>
-      <ButtonComponent color="warning" onClick={handleClickOpen}>
+      <ButtonComponent
+        tooltipTitle={tooltipTitle}
+        variant="text"
+        color={buttonColor}
+        onClick={handleClickOpen}
+      >
         {children}
       </ButtonComponent>
 
@@ -57,12 +83,20 @@ const ConfirmationDialog: React.FC<IConfirmationDialogProps> = ({
         </DialogContent>
 
         <DialogActions>
-          <ButtonComponent variant="outlined" onClick={handleClose}>
-            {enJson.disagree}
+          <ButtonComponent
+            tooltipTitle={enJson.disagree}
+            variant="outlined"
+            onClick={handleClose}
+          >
+            <ThumbDownAltIcon />
           </ButtonComponent>
 
-          <ButtonComponent onClick={handleAgree}>
-            {enJson.agree}
+          <ButtonComponent
+            tooltipTitle={enJson.agree}
+            color={isDelete ? buttonColor : "primary"}
+            onClick={handleAgree}
+          >
+            <ThumbUpAltIcon />
           </ButtonComponent>
         </DialogActions>
       </Dialog>

@@ -20,6 +20,7 @@ export interface IBook {
   description: string;
   quantity: number;
   author: string;
+  actualQuantity: number;
 }
 
 export interface IBookState {

@@ -52,6 +52,7 @@
   "bookManagement": "Book Management",
   "title": "Title",
   "description": "Description",
+  "currentQuantity": "Current Quantity",
   "quantity": "Quantity",
   "author": "Author",
   "titleRequired": "Title is required.",
@@ -67,6 +68,7 @@
   "delete": "Delete",
   "areYouWantToDeleteBook": "Are you sure you want to delete this book?",
   "bookAssignedSomeone": "This book is assigned to someone and cannot be deleted.",
+  "assignedMoreThanQuantity": "You have already assigned more than the quantity.",
   "noBooksAvailable": "No books are available.",
   "bookCreated": "Book created successfully.",
   "bookUpdated": "Book updated successfully.",
@@ -87,5 +89,7 @@
   "bookAlreadyAssigned": "Book is already assigned.",
   "quantityNotAvailable": "Quantity is not available for this book.",
   "bookAssignedSuccessfully": "Book assigned successfully.",
-  "bookAssignedUpdated": "Book assignment updated successfully."
+  "bookAssignedUpdated": "Book assignment updated successfully.",
+  "bookReturnConfirmation": "Book Return Confirmation",
+  "areYouWantToReturnBook": "Are you sure you want to return this book?"
 }

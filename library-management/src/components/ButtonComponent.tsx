@@ -4,6 +4,7 @@ import {
   Button,
   ButtonPropsColorOverrides,
   ButtonPropsVariantOverrides,
+  Tooltip,
 } from "@mui/material";
 
 interface IButtonComponentProps {
@@ -29,6 +30,7 @@ interface IButtonComponentProps {
         ButtonPropsColorOverrides
       >
     | undefined;
+  tooltipTitle: React.ReactNode;
 }
 
 const ButtonComponent: React.FC<IButtonComponentProps> = ({
@@ -38,17 +40,20 @@ const ButtonComponent: React.FC<IButtonComponentProps> = ({
   variant = "contained",
   className,
   color,
+  tooltipTitle,
 }) => {
   return (
-    <Button
-      type={type}
-      variant={variant}
-      className={`!normal-case !text-xl ${className}`}
-      onClick={onClick}
-      color={color}
-    >
-      {children}
-    </Button>
+    <Tooltip title={tooltipTitle} arrow>
+      <Button
+        type={type}
+        variant={variant}
+        className={`!normal-case !text-xl ${className}`}
+        onClick={onClick}
+        color={color}
+      >
+        {children}
+      </Button>
+    </Tooltip>
   );
 };
 

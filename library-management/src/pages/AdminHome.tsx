@@ -2,6 +2,7 @@ import React, { memo, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Typography } from "@mui/material";
 import { toast } from "react-toastify";
+import _ from "lodash";
 import { IAdminDashboard } from "../types";
 import { ACCOUNT_TYPE } from "../constants";
 import HeadingText from "../components/HeadingText";
@@ -28,13 +29,13 @@ const AdminHome: React.FC = () => {
         .map((user) => ({
           id: user.id,
           student: `${user.fullName} (${user.email})`,
-          lastIssuedBook: assignedBooks
-            .filter((assignedBook) => assignedBook.studentId === user.id)
-            .sort(
-              (a, b) =>
-                new Date(b.issueDate).getTime() -
-                new Date(a.issueDate).getTime()
-            )?.[0]?.bookId,
+          lastIssuedBook: _.orderBy(
+            assignedBooks.filter(
+              (assignedBook) => assignedBook.studentId === user.id
+            ),
+            ["issueDate"],
+            ["desc"]
+          )?.[0]?.bookId,
           totalIssuedBook: assignedBooks.filter(
             (assignedBook) => assignedBook.studentId === user.id
           ).length,

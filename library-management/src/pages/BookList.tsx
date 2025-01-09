@@ -1,6 +1,9 @@
 import React, { memo, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { FormikErrors, FormikHelpers, useFormik } from "formik";
+import CancelPresentationIcon from "@mui/icons-material/CancelPresentation";
+import PlaylistAddIcon from "@mui/icons-material/PlaylistAdd";
+import EditNoteIcon from "@mui/icons-material/EditNote";
 import { Typography } from "@mui/material";
 import { toast } from "react-toastify";
 import { v4 as uuidv4 } from "uuid";
@@ -14,13 +17,20 @@ import { addBook, editBook } from "../store/bookSlice";
 import { AppDispatch, RootState } from "../store/store";
 import { deleteBookWithAssignedBookUpdate } from "../store/thunkForBooks";
 import enJson from "../locales/en.json";
+import _ from "lodash";
 
-const initialValues: IBook = {
+interface IFormData extends IBook {
+  quantityDiff: number;
+}
+
+const initialValues: IFormData = {
   id: "",
   title: "",
   description: "",
   quantity: 0,
   author: "",
+  actualQuantity: 0,
+  quantityDiff: 0,
 };
 
 const validationSchema = Yup.object({
@@ -32,12 +42,17 @@ const validationSchema = Yup.object({
   author: Yup.string().required(enJson.authorRequired),
 });
 
-const columns: Column<IBook>[] = [
+const columns: Column<IFormData>[] = [
   { id: "title", label: enJson.title, minWidth: 170 },
   { id: "description", label: enJson.description, minWidth: 170 },
   {
-    id: "quantity",
+    id: "actualQuantity",
     label: enJson.quantity,
+    minWidth: 100,
+  },
+  {
+    id: "quantity",
+    label: enJson.currentQuantity,
     minWidth: 100,
     format: (value) => (
       <Typography color={!value ? "warning" : ""} className="!text-sm">
@@ -55,22 +70,41 @@ const columns: Column<IBook>[] = [
 const BookList: React.FC = () => {
   const books = useSelector((state: RootState) => state.book.books);
 
-  const assignedBooks = useSelector(
-    (state: RootState) => state.assignedBook.assignedBooks
-  );
-
   const dispatch = useDispatch<AppDispatch>();
 
   const onSubmit = useCallback(
-    (values: IBook, { resetForm }: FormikHelpers<IBook>) => {
+    (
+      values: IFormData,
+      { resetForm, setFieldError }: FormikHelpers<IFormData>
+    ) => {
       if (values.id) {
-        dispatch(editBook(values));
+        if (!(values.actualQuantity - values.quantityDiff)) {
+          setFieldError("actualQuantity", enJson.assignedMoreThanQuantity);
+          return;
+        }
 
-        toast.success(enJson.bookCreated);
-      } else {
-        dispatch(addBook({ ...values, id: uuidv4() }));
+        const valuesWithoutQuantityDiff = _.omit(values, ["quantityDiff"]);
+        
+        dispatch(
+          editBook({
+            ...valuesWithoutQuantityDiff,
+            quantity: values.actualQuantity - values.quantityDiff,
+          })
+        );
 
         toast.success(enJson.bookUpdated);
+      } else {
+        const valuesWithoutQuantityDiff = _.omit(values, ["quantityDiff"]);
+
+        dispatch(
+          addBook({
+            ...valuesWithoutQuantityDiff,
+            id: uuidv4(),
+            quantity: values.actualQuantity,
+          })
+        );
+
+        toast.success(enJson.bookCreated);
       }
       resetForm();
     },
@@ -79,11 +113,11 @@ const BookList: React.FC = () => {
 
   const handleEdit = useCallback(
     (
-      book: IBook,
+      book: IFormData,
       setValues: (
-        values: React.SetStateAction<IBook>,
+        values: React.SetStateAction<IFormData>,
         shouldValidate?: boolean
-      ) => Promise<void> | Promise<FormikErrors<IBook>>
+      ) => Promise<void> | Promise<FormikErrors<IFormData>>
     ) => {
       setValues(book);
     },
@@ -91,22 +125,18 @@ const BookList: React.FC = () => {
   );
 
   const handleDelete = useCallback(
-    (id: string) => {
-      const assignedBookExist = assignedBooks.find(
-        (assignedBook) => assignedBook.bookId === id && assignedBook.isAssigned
-      );
-
-      if (assignedBookExist) {
+    (selectedBook: IFormData) => {
+      if (selectedBook.actualQuantity !== selectedBook.quantity) {
         toast.error(enJson.bookAssignedSomeone);
 
         return;
       }
 
-      dispatch(deleteBookWithAssignedBookUpdate({ bookId: id }));
+      dispatch(deleteBookWithAssignedBookUpdate({ bookId: selectedBook.id }));
 
       toast.success(enJson.bookDeleted);
     },
-    [assignedBooks, dispatch]
+    [dispatch]
   );
 
   const {
@@ -158,15 +188,15 @@ const BookList: React.FC = () => {
         />
 
         <InputField
-          id="quantity"
+          id="actualQuantity"
           label={enJson.quantity}
           type="number"
-          name="quantity"
-          value={values.quantity}
+          name="actualQuantity"
+          value={values.actualQuantity}
           onChange={handleChange}
           onBlur={handleBlur}
-          error={touched.quantity && !!errors.quantity}
-          helperText={touched.quantity && errors.quantity}
+          error={touched.actualQuantity && !!errors.actualQuantity}
+          helperText={touched.actualQuantity && errors.actualQuantity}
         />
 
         <InputField
@@ -182,17 +212,22 @@ const BookList: React.FC = () => {
         />
 
         <div className="w-full flex gap-3 justify-end xl:col-start-5 md:col-start-3 col-start-1 xl:col-span-1 col-span-2">
-          <ButtonComponent type="submit" className="h-14 min-w-24">
-            {values.id ? enJson.update : enJson.submit}
+          <ButtonComponent
+            tooltipTitle={values.id ? enJson.update : enJson.submit}
+            type="submit"
+            className="h-14 min-w-24"
+          >
+            {values.id ? <EditNoteIcon /> : <PlaylistAddIcon />}
           </ButtonComponent>
 
           <ButtonComponent
+            tooltipTitle={enJson.reset}
             type="button"
             onClick={() => resetForm()}
             variant="outlined"
             className="h-14 min-w-24"
           >
-            {enJson.reset}
+            <CancelPresentationIcon />
           </ButtonComponent>
         </div>
       </form>
@@ -200,10 +235,13 @@ const BookList: React.FC = () => {
       {/* Book List */}
       <TableComponent
         columns={columns}
-        rows={books}
+        rows={books.map((book) => ({
+          ...book,
+          quantityDiff: book.actualQuantity - book.quantity,
+        }))}
         showAction
         onEdit={(row) => handleEdit(row, setValues)}
-        onDelete={(row) => handleDelete(row.id)}
+        onDelete={(row) => handleDelete(row)}
         noTableData={enJson.noBooksAvailable}
         deleteDescription={enJson.areYouWantToDeleteBook}
       />

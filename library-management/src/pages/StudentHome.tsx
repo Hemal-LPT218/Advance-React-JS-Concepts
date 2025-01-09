@@ -1,6 +1,9 @@
 import React, { memo, useMemo } from "react";
 import { useSelector } from "react-redux";
-import { Typography } from "@mui/material";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import PauseCircleFilledIcon from "@mui/icons-material/PauseCircleFilled";
+import { Tooltip, Typography } from "@mui/material";
+import _ from "lodash";
 import { RootState } from "../store/store";
 import { IAssignedBook } from "../types";
 import TableComponent, { Column } from "../components/TableComponent";
@@ -57,11 +60,19 @@ const StudentHome: React.FC = () => {
             color={
               value && new Date(row?.returnDate as string) < new Date()
                 ? "warning"
-                : ""
+                : "primary"
             }
             className="!text-sm"
           >
-            {!value ? enJson.yes : enJson.no}
+            {!value ? (
+              <Tooltip title={enJson.yes} arrow>
+                <CheckCircleIcon color="success" />
+              </Tooltip>
+            ) : (
+              <Tooltip title={enJson.no} arrow>
+                <PauseCircleFilledIcon />
+              </Tooltip>
+            )}
           </Typography>
         ),
       },
@@ -75,9 +86,15 @@ const StudentHome: React.FC = () => {
 
       <TableComponent
         columns={columns}
-        rows={assignedBooks.filter(
-          (assignedBook) => assignedBook.studentId === user?.id
-        )}
+        rows={
+          _.orderBy(
+            assignedBooks.filter(
+              (assignedBook) => assignedBook.studentId === user?.id
+            ),
+            ["isAssigned", "returnDate"],
+            ['desc', 'asc']
+          )
+        }
         noTableData={enJson.noAssignedBooksAvailable}
         tableMaxHeight={400}
       />

@@ -7,6 +7,8 @@ import TableCell from "@mui/material/TableCell";
 import TableHead from "@mui/material/TableHead";
 import TableContainer from "@mui/material/TableContainer";
 import TablePagination from "@mui/material/TablePagination";
+import DeleteSweepIcon from "@mui/icons-material/DeleteSweep";
+import EditNoteIcon from "@mui/icons-material/EditNote";
 import ConfirmationDialog from "./ConfirmationDialog";
 import ButtonComponent from "./ButtonComponent";
 import enJson from "../locales/en.json";
@@ -92,14 +94,15 @@ const TableComponent = <T,>({
                   );
                 })}
                 {showAction && (
-                  <TableCell align="center" className="min-w-52">
+                  <TableCell align="center" className="min-w-44">
                     {!hideEdit && (
                       <ButtonComponent
-                        variant="contained"
+                        tooltipTitle={enJson.edit}
+                        variant="text"
                         onClick={() => onEdit?.(row)}
                         className="!mr-2"
                       >
-                        {enJson.edit}
+                        <EditNoteIcon />
                       </ButtonComponent>
                     )}
                     <ConfirmationDialog
@@ -107,7 +110,7 @@ const TableComponent = <T,>({
                       description={deleteDescription}
                       onSuccess={() => onDelete?.(row)}
                     >
-                      {enJson.delete}
+                      <DeleteSweepIcon />
                     </ConfirmationDialog>
                   </TableCell>
                 )}

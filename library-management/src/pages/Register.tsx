@@ -158,7 +158,9 @@ const Register = () => {
           ]}
         />
 
-        <ButtonComponent type="submit">{enJson.register}</ButtonComponent>
+        <ButtonComponent tooltipTitle={enJson.register} type="submit">
+          {enJson.register}
+        </ButtonComponent>
 
         <Typography>
           {enJson.alreadyAccount}{" "}

@@ -27,7 +27,7 @@ export const addAssignedBookWithBookUpdate = createAsyncThunk(
 export const updateAssignedBookWithBookUpdate = createAsyncThunk(
   "assignedBooks/updateWithBookUpdate",
   async (
-    { id, checked, bookId }: { id?: string; checked: boolean; bookId?: string },
+    { id, bookId }: { id?: string; bookId?: string },
     { dispatch, getState }
   ) => {
     const state = getState() as RootState;
@@ -35,13 +35,9 @@ export const updateAssignedBookWithBookUpdate = createAsyncThunk(
     const book = state.book.books.find((b: IBook) => b.id === bookId);
 
     if (book) {
-      dispatch(updateAssignBook({ id, checked }));
+      dispatch(updateAssignBook({ id }));
 
-      const quantityAdjustment = checked ? -1 : 1;
-
-      dispatch(
-        editBook({ ...book, quantity: book.quantity + quantityAdjustment })
-      );
+      dispatch(editBook({ ...book, quantity: book.quantity + 1 }));
     }
   }
 );
